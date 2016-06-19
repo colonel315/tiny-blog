@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Address;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
@@ -16,11 +18,11 @@ class AddressController extends Controller
         return view('user.address')->with(['addresses' => $addresses]);
     }
 
-    public function show($addressId)
+    public function edit($addressId)
     {
         $address = Auth::user()->addresses()->where('id', $addressId)->first();
 
-        return view('user.showAddress')->with('address', $address);
+        return view('user.editAddress')->with('address', $address);
     }
 
     public function update(Request $request)
@@ -34,6 +36,26 @@ class AddressController extends Controller
 
         $address->save();
 
-        return redirect()->action('User\UserController@settings');
+        return redirect()->action('User\UserController@addresses');
+    }
+
+    public function add()
+    {
+        return view('user.addAddress');
+    }
+
+    public function create(Request $request)
+    {
+        $user = Auth::user();
+
+        $address = new Address;
+        $address->street = $request->street;
+        $address->city = $request->city;
+        $address->state = $request->state;
+        $address->zip = $request->zip;
+
+        $user->addAddress($address, $user->id);
+
+        return redirect()->action('User\UserController@addresses');
     }
 }

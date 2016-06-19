@@ -23,5 +23,7 @@ Route::get('/settings', 'User\UserController@settings');
 Route::post('/update', 'User\UserController@update');
 
 Route::get('/addresses', 'User\AddressController@addresses');
-Route::get('/addresses/{id}', 'User\AddressController@show');
+Route::get('/addresses/add', 'User\AddressController@add');
+Route::get('/addresses/{id}', 'User\AddressController@edit');
+Route::post('/addresses/create', 'User\AddressController@create');
 Route::post('/addresses/update', 'User\AddressController@update');
