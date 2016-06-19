@@ -42,6 +42,9 @@ class UserController extends Controller
         elseif(!is_null($request->description)) {
             $user->description = $request->description;
         }
+        elseif(!is_null($request->new_password)) {
+            $user->password = bcrypt($request->new_password);
+        }
 
         $user->save();
 

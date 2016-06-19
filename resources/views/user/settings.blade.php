@@ -73,8 +73,19 @@
                             <input type="submit" class="btn btn-default btn-sm">
                         </form>
                     </li>
+                    <li class="list-group-item">
+                        <button class="btn btn-xs btn-primary pull-right">
+                            <a href="#">Edit</a>
+                        </button>
+
+                        Change Password
+                        <form class='form-horizontal hidden' role='form' action="{{ url('/update') }}" method='post'>
+                            {{ csrf_field() }}
+                            <input type="password" class='form-control' name="new_password">
+                            <input type="submit" class="btn btn-default btn-sm">
+                        </form>
+                    </li>
                     <li class="list-group-item"><a href="{{ url('/addresses') }}">Manage Addresses</a></li>
-                    <li class="list-group-item"><a href="#">Change Password</a></li>
                 </ul>
             </div>
         </div>
