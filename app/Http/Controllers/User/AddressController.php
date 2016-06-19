@@ -22,4 +22,18 @@ class AddressController extends Controller
 
         return view('user.showAddress')->with('address', $address);
     }
+
+    public function update(Request $request)
+    {
+        $address = Auth::user()->addresses()->where('id', $request->addressId)->first();
+
+        $address->street = $request->street;
+        $address->city = $request->city;
+        $address->state = $request->state;
+        $address->zip = $request->zip;
+
+        $address->save();
+
+        return redirect()->action('User\UserController@settings');
+    }
 }

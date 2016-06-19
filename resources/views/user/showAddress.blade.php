@@ -38,8 +38,10 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Edit</div>
                         <div class="panel-body">
-                            <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
+                            <form class="form-horizontal" role="form" method="POST" action="{{ url('/addresses/update') }}">
                                 {{ csrf_field() }}
+
+                                <input type="hidden" name="addressId" value="{{ $address['id'] }}">
 
                                 <div class="form-group{{ $errors->has('street') ? ' has-error' : '' }}">
                                     <label for="street" class="col-md-4 control-label">Street Address</label>

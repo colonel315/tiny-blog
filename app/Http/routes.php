@@ -24,3 +24,4 @@ Route::post('/update', 'User\UserController@update');
 
 Route::get('/addresses', 'User\AddressController@addresses');
 Route::get('/addresses/{id}', 'User\AddressController@show');
+Route::post('/addresses/update', 'User\AddressController@update');
