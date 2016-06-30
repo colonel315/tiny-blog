@@ -56,6 +56,20 @@ class AddressController extends Controller
 
         $user->addAddress($address, $user->id);
 
-        return redirect()->action('User\UserController@addresses');
+        return redirect()->action('User\AddressController@addresses');
+    }
+
+    public function remove($addressId) {
+        $address = Auth::user()->addresses()->where('id', $addressId)->first();
+
+        return view('user.deleteAddress')->with('address', $address);
+    }
+    
+    public function delete(Request $request) {
+        $user = Auth::user();
+
+        $user->addresses()->where('id', $request->addressId)->delete();
+        
+        return redirect()->action('User\AddressController@addresses');
     }
 }

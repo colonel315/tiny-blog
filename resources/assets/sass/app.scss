@@ -1,5 +1,13 @@
 // @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
 .btn a {
+  text-decoration: none;
+}
+
+.btn a {
   color: #fff;
+}
+
+.btn-default a {
+  color: #337ab7;
 }

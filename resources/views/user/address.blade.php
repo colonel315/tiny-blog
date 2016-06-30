@@ -26,8 +26,11 @@
                                         <button class="btn btn-primary">
                                             <a href="{{ url('/addresses/' . $addresses[$i]->id) }}">Edit</a>
                                         </button>
-                                        <button class="btn btn-danger">
+                                        <button class="btn btn-warning">
                                             <a href="{{ url('/addresses/add') }}">Add</a>
+                                        </button>
+                                        <button class="btn btn-danger">
+                                            <a href="{{ url('/addresses/delete/' . $addresses[$i]->id) }}">Delete</a>
                                         </button>
                                     </li>
                                 </ul>

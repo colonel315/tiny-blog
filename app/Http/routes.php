@@ -25,5 +25,7 @@ Route::post('/update', 'User\UserController@update');
 Route::get('/addresses', 'User\AddressController@addresses');
 Route::get('/addresses/add', 'User\AddressController@add');
 Route::get('/addresses/{id}', 'User\AddressController@edit');
+Route::get('/addresses/delete/{id}', 'User\AddressController@remove');
 Route::post('/addresses/create', 'User\AddressController@create');
 Route::post('/addresses/update', 'User\AddressController@update');
+Route::post('/addresses/delete', 'User\AddressController@delete');
