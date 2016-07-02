@@ -24,7 +24,9 @@
         <div class="row">
             <div class="col-sm-8 col-sm-offset-2">
                 @if(is_null($data))
-                    <h1>No results.</h1>
+                    <div class="col-sm-8 col-sm-offset-4">
+                        <h1>No results.</h1>
+                    </div>
                 @else
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
@@ -33,6 +35,7 @@
                                 <th>Last Name</th>
                                 <th>City</th>
                                 <th>State</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,6 +45,13 @@
                                     <td>{{ $data[$i]->last_name }}</td>
                                     <td>{{ $data[$i]->city }}</td>
                                     <td>{{ $data[$i]->state }}</td>
+                                    <td>
+                                        <button class="btn btn-primary">
+                                            <a href="{{ url('/viewUser/' . $data[$i]->username) }}">
+                                                View {{ $data[$i]->first_name }} {{ $data[$i]->last_name }}'s Profile
+                                            </a>
+                                        </button>
+                                    </td>
                                 </tr>
                             @endfor
                         </tbody>

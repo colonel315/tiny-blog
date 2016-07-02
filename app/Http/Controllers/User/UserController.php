@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\User;
 
 class UserController extends Controller
 {
@@ -91,17 +92,36 @@ class UserController extends Controller
     {
         $query = $request["query"];
 
+        $user = Auth::user()->id;
+
         $data = DB::select("SELECT *, 
                               MATCH (first_name, last_name) AGAINST ('".$query."') AS nscore, 
                               MATCH (addresses.city, addresses.state) AGAINST ('".$query."') AS cscore 
                           FROM users 
-                            JOIN addresses ON users.id=addresses.user_id 
+                            JOIN 
+                                addresses ON users.id = addresses.user_id 
                           WHERE 
-                            MATCH (first_name, last_name) AGAINST ('".$query."')
+                            (MATCH (first_name, last_name) AGAINST ('".$query."')
                           OR 
-                            MATCH (addresses.city, addresses.state) AGAINST ('".$query."') 
-                          ORDER BY nscore + cscore DESC");
+                            MATCH (addresses.city, addresses.state) AGAINST ('".$query."')) 
+                          AND
+                            NOT users.id = ".$user."
+                          GROUP BY 
+                            users.id
+                          ORDER BY 
+                            nscore + cscore DESC");
 
         return view('user.search')->with('data', $data);
+    }
+    
+    public function viewUser($username) {
+        $user = User::all()->where('username', $username)->first();
+
+        $data = [
+            'user' => $user,
+            'addresses' => $user->addresses
+        ];
+
+        return view('user.viewUser')->with('data', $data);
     }
 }
