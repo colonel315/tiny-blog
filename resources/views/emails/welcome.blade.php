@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-sm-10">
                 <div class="jumbotron">
-                    Welcome {{ $name }}! <br>
+                    Welcome {{ $first_name }}! <br>
                     Your password: {{ $password }}
                 </div>
             </div>

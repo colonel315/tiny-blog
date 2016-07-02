@@ -21,6 +21,8 @@ class CreateAddressesTable extends Migration
             $table->string('zip');
             $table->timestamps();
         });
+
+        DB::statement('ALTER TABLE addresses ADD FULLTEXT search(city, state)');
     }
 
     /**
@@ -30,6 +32,10 @@ class CreateAddressesTable extends Migration
      */
     public function down()
     {
+        Schema::table('addresses', function($table) {
+            $table->dropIndex('search');
+        });
+
         Schema::drop('addresses');
     }
 }

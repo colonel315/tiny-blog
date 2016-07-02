@@ -20,7 +20,10 @@ Route::auth();
 Route::get('/home', 'HomeController@index');
 
 Route::get('/settings', 'User\UserController@settings');
+Route::get('/change-password', 'User\UserController@changePassword');
 Route::post('/update', 'User\UserController@update');
+Route::get('/search', 'User\UserController@search');
+Route::post('/search-users', 'User\UserController@searchUsers');
 
 Route::get('/addresses', 'User\AddressController@addresses');
 Route::get('/addresses/add', 'User\AddressController@add');

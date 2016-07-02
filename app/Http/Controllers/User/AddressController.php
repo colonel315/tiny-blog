@@ -11,18 +11,36 @@ use Illuminate\Support\Facades\Auth;
 
 class AddressController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'password' => 'required|min:6|confirmed'
+        ]);
+    }
+
     public function addresses()
     {
         $addresses = Auth::user()->addresses;
         
-        return view('user.address')->with(['addresses' => $addresses]);
+        return view('address.address')->with(['addresses' => $addresses]);
     }
 
     public function edit($addressId)
     {
         $address = Auth::user()->addresses()->where('id', $addressId)->first();
 
-        return view('user.editAddress')->with('address', $address);
+        return view('address.editAddress')->with('address', $address);
     }
 
     public function update(Request $request)
@@ -36,12 +54,12 @@ class AddressController extends Controller
 
         $address->save();
 
-        return redirect()->action('User\UserController@addresses');
+        return redirect()->action('User\addressController@addresses');
     }
 
     public function add()
     {
-        return view('user.addAddress');
+        return view('address.addAddress');
     }
 
     public function create(Request $request)
@@ -62,7 +80,7 @@ class AddressController extends Controller
     public function remove($addressId) {
         $address = Auth::user()->addresses()->where('id', $addressId)->first();
 
-        return view('user.deleteAddress')->with('address', $address);
+        return view('address.deleteAddress')->with('address', $address);
     }
     
     public function delete(Request $request) {

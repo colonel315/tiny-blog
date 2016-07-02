@@ -51,9 +51,15 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
+            'street' => 'required',
+            'zip' => 'required|min:5',
+            'city' => 'required',
+            'state' => 'required',
+            'username' => 'required|min:5|unique:users'
         ]);
     }
 
@@ -68,7 +74,8 @@ class AuthController extends Controller
         $this->sendEmail($data);
 
         $user = User::create([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
             'description' => $data['description'],
             'high_school' => $data['high_school'],
@@ -89,13 +96,8 @@ class AuthController extends Controller
 
     protected function sendEmail(array $data)
     {
-        $viewData = [
-            'name' => $data['name'],
-            'password' => $data['password']
-        ];
-
         Mail::send('emails.welcome', $data, function ($m) use ($data) {
-            $m->to($data['email'], $data['name'])->subject("Welcome!");
+            $m->to($data['email'], $data['first_name'])->subject("Welcome!");
         });
     }
 }
