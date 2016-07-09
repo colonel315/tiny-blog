@@ -29,9 +29,24 @@ class User extends Authenticatable
         return $this->hasMany(Address::class);
     }
 
+    public function blockedUsers()
+    {
+        return $this->belongsToMany(User::class, 'blocked_users', 'user_id', 'blocked_id');
+    }
+
     public function addAddress(Address $address, $userId)
     {
         $address->user_id = $userId;
         return $this->addresses()->save($address);
+    }
+
+    public function addBlocked($blockedId)
+    {
+        $this->blockedUsers()->attach($blockedId);
+    }
+
+    public function removeBlocked($blockedId)
+    {
+        $this->blockedUsers()->detach($blockedId);
     }
 }

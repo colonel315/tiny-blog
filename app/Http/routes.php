@@ -23,6 +23,9 @@ Route::get('/settings', 'User\UserController@settings');
 Route::get('/change-password', 'User\UserController@changePassword');
 Route::get('/search', 'User\UserController@search');
 Route::get('/viewUser/{username}', 'User\UserController@viewUser');
+Route::get('/blocked-users', 'User\UserController@viewBlocked');
+Route::post('/block/{id}', 'User\UserController@blockUser');
+Route::post('/unblock/{id}', 'User\UserController@removeBlockUser');
 Route::post('/update', 'User\UserController@update');
 Route::post('/search-users', 'User\UserController@searchUsers');
 

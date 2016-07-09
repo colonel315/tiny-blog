@@ -99,6 +99,13 @@
 
                         Manage Addresses
                     </li>
+                    <li class="list-group-item">
+                        <button class="btn btn-xs btn-primary pull-right">
+                            <a href="{{ url('/blocked-users') }}">Edit</a>
+                        </button>
+
+                        Manage Blocked Users
+                    </li>
                 </ul>
             </div>
         </div>

@@ -4,6 +4,28 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-8">
+                <div class="pull-right">
+                    @if(Auth::user()->blockedUsers()->where('blocked_id', $data['user']->id)->exists())
+                        <form action="{{ url('/unblock/' . $data["user"]->id) }}" method="post" class="form-horizontal">
+                            <input type="hidden" name="id" value="{{ $data['user']->id }}">
+                            {{ csrf_field() }}
+
+                            <button type="submit" class="btn btn-primary">
+                                Unblock {{ $data["user"]->first_name }} {{ $data["user"]->last_name }}
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ url('/block/' . $data["user"]->id) }}" method="post" class="form-horizontal">
+                            <input type="hidden" name="id" value="{{ $data['user']->id }}">
+                            {{ csrf_field() }}
+
+                            <button type="submit" class="btn btn-danger">
+                                Block {{ $data["user"]->first_name }} {{ $data["user"]->last_name }}
+                            </button>
+                        </form>
+                    @endif
+
+                </div>
                 <h3 class="h3">General Info</h3>
                 <div class="list-group">
                     <div class="list-group-item">First Name: {{ $data["user"]->first_name }}</div>

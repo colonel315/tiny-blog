@@ -12,6 +12,11 @@
 
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
+                <div class="pull-right">
+                    <button class="btn btn-lg btn-warning">
+                        <a href="{{ url('/addresses/add') }}">Add</a>
+                    </button>
+                </div>
                 <ul class="list-group">
                     @for($i = 0; $i < count($addresses); $i++)
                         <div class="panel panel-heading">
@@ -25,9 +30,6 @@
                                     <li class="list-group-item">
                                         <button class="btn btn-primary">
                                             <a href="{{ url('/addresses/' . $addresses[$i]->id) }}">Edit</a>
-                                        </button>
-                                        <button class="btn btn-warning">
-                                            <a href="{{ url('/addresses/add') }}">Add</a>
                                         </button>
                                         <button class="btn btn-danger">
                                             <a href="{{ url('/addresses/delete/' . $addresses[$i]->id) }}">Delete</a>

@@ -23,12 +23,12 @@
 
         <div class="row">
             <div class="col-sm-8 col-sm-offset-2">
-                @if(is_null($data))
+                @if(is_null($data) || count($data) === 0)
                     <div class="col-sm-8 col-sm-offset-4">
                         <h1>No results.</h1>
                     </div>
                 @else
-                    <table class="table table-striped table-bordered table-hover">
+                    <table class="table table-striped table-bordered table-hover table-responsive">
                         <thead>
                             <tr>
                                 <th>First Name</th>
