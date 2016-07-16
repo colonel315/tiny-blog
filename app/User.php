@@ -29,9 +29,9 @@ class User extends Authenticatable
         return $this->hasMany(Address::class);
     }
 
-    public function blockedUsers()
+    public function userRelationships()
     {
-        return $this->belongsToMany(User::class, 'blocked_users', 'user_id', 'blocked_id');
+        return $this->belongsToMany(User::class, 'user_relationship', 'user_id', 'relationship_id');
     }
 
     public function addAddress(Address $address, $userId)
@@ -40,13 +40,29 @@ class User extends Authenticatable
         return $this->addresses()->save($address);
     }
 
-    public function addBlocked($blockedId)
+    public function addBlocked($userId, $blockedId)
     {
-        $this->blockedUsers()->attach($blockedId);
+        Block::create([
+            'user_id' => $userId,
+            'relationship_id' => $blockedId
+        ]);
     }
 
     public function removeBlocked($blockedId)
     {
-        $this->blockedUsers()->detach($blockedId);
+        $this->userRelationships()->detach($blockedId);
+    }
+    
+    public function addFriend($userId, $friendId)
+    {
+        Friend::create([
+            'user_id' => $userId,
+            'relationship_id' => $friendId
+        ]);
+    }
+
+    public function removeFriend($friendId)
+    {
+        $this->userRelationships()->detach($friendId);
     }
 }

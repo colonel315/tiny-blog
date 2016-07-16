@@ -24,6 +24,8 @@ Route::get('/change-password', 'User\UserController@changePassword');
 Route::get('/search', 'User\UserController@search');
 Route::get('/viewUser/{username}', 'User\UserController@viewUser');
 Route::get('/blocked-users', 'User\UserController@viewBlocked');
+Route::post('/friend/{id}', 'User\UserController@FriendUser');
+Route::post('/unfriend/{id}', 'User\UserController@removeFriendUser');
 Route::post('/block/{id}', 'User\UserController@blockUser');
 Route::post('/unblock/{id}', 'User\UserController@removeBlockUser');
 Route::post('/update', 'User\UserController@update');

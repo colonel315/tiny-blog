@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-sm-8">
                 <div class="pull-right">
-                    @if(Auth::user()->blockedUsers()->where('blocked_id', $data['user']->id)->exists())
+                    @if(Auth::user()->userRelationships()->where('relationship_id', $data['user']->id)->where('type', 'Block')->exists())
                         <form action="{{ url('/unblock/' . $data["user"]->id) }}" method="post" class="form-horizontal">
                             <input type="hidden" name="id" value="{{ $data['user']->id }}">
                             {{ csrf_field() }}
@@ -24,7 +24,27 @@
                             </button>
                         </form>
                     @endif
+                </div>
+                <div class="pull-right">
+                    @if(Auth::user()->userRelationships()->where('relationship_id', $data['user']->id)->where('type', 'Friend')->exists())
+                        <form action="{{ url('/unfriend/' . $data["user"]->id) }}" method="post" class="form-horizontal">
+                            <input type="hidden" name="id" value="{{ $data['user']->id }}">
+                            {{ csrf_field() }}
 
+                            <button type="submit" class="btn btn-warning" style = "margin-right: 15px;">
+                                Unfriend {{ $data["user"]->first_name }} {{ $data["user"]->last_name }}
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ url('/friend/' . $data["user"]->id) }}" method="post" class="form-horizontal">
+                            <input type="hidden" name="id" value="{{ $data['user']->id }}">
+                            {{ csrf_field() }}
+
+                            <button type="submit" class="btn btn-primary" style = "margin-right: 15px;">
+                                Friend {{ $data["user"]->first_name }} {{ $data["user"]->last_name }}
+                            </button>
+                        </form>
+                    @endif
                 </div>
                 <h3 class="h3">General Info</h3>
                 <div class="list-group">

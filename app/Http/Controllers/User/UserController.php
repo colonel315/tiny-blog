@@ -99,7 +99,7 @@ class UserController extends Controller
                                 MATCH (addresses.city, addresses.state) AGAINST ('".$query."') AS cscore
                             FROM users
                               LEFT JOIN addresses ON users.id = addresses.user_id
-                              LEFT JOIN blocked_users ON users.id = blocked_users.user_id
+                              LEFT JOIN user_relationship ON users.id = user_relationship.user_id
                             WHERE
                               (MATCH (first_name, last_name) AGAINST ('".$query."')
                             OR
@@ -107,17 +107,19 @@ class UserController extends Controller
                             AND
                               NOT users.id = ".$userId."
                             AND
-                              (blocked_users.blocked_id NOT IN (".$userId.")
-                            OR
-                               blocked_users.blocked_id IS NULL)");
+                              user_relationship.relationship_id IS NULL");
 
         return view('user.search')->with('data', $data);
     }
     
     public function viewUser($username) {
+        if($username == Auth::user()->username) {
+            return redirect()->to('/home');
+        }
+
         $user = User::all()->where('username', $username)->first();
 
-        if($user->blockedUsers()->where('blocked_id', Auth::user()->id)->where('user_id', $user->id)->exists()) {
+        if($user->userRelationships()->where('relationship_id', Auth::user()->id)->where('user_id', $user->id)->where('type', 'Block')->exists()) {
             abort(404, "unauthorized access");
         }
 
@@ -139,7 +141,7 @@ class UserController extends Controller
     public function blockUser($id) {
         $user = User::find(Auth::user()->id);
         
-        $user->addBlocked($id);
+        $user->addBlocked($user->id, $id);
 
         return back();
     }
@@ -148,6 +150,22 @@ class UserController extends Controller
         $user = User::find(Auth::user()->id);
 
         $user->removeBlocked($id);
+
+        return back();
+    }
+    
+    public function friendUser($id) {
+        $user = User::find(Auth::user()->id);
+        
+        $user->addFriend($user->id, $id);
+
+        return back();
+    }
+
+    public function removeFriendUser($id) {
+        $user = User::find(Auth::user()->id);
+
+        $user->removeFriend($id);
 
         return back();
     }
