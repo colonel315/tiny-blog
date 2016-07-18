@@ -11,16 +11,25 @@
 |
 */
 
+use Illuminate\Support\Facades\Auth;
+
 Route::get('/', function () {
-    return view('welcome');
+    if(Auth::guest()) {
+        return view('welcome');
+    }
+    else {
+        return redirect()->action('HomeController@index');
+    }
 });
 
 Route::auth();
 
 Route::get('/home', 'HomeController@index');
+Route::get('/settings', 'HomeController@settings');
+Route::get('/change-password', 'HomeController@changePassword');
+Route::post('/update', 'HomeController@update');
+Route::post('/new-status', 'HomeController@createStatus');
 
-Route::get('/settings', 'User\UserController@settings');
-Route::get('/change-password', 'User\UserController@changePassword');
 Route::get('/search', 'User\UserController@search');
 Route::get('/viewUser/{username}', 'User\UserController@viewUser');
 Route::get('/blocked-users', 'User\UserController@viewBlocked');
@@ -28,7 +37,6 @@ Route::post('/friend/{id}', 'User\UserController@FriendUser');
 Route::post('/unfriend/{id}', 'User\UserController@removeFriendUser');
 Route::post('/block/{id}', 'User\UserController@blockUser');
 Route::post('/unblock/{id}', 'User\UserController@removeBlockUser');
-Route::post('/update', 'User\UserController@update');
 Route::post('/search-users', 'User\UserController@searchUsers');
 
 Route::get('/addresses', 'User\AddressController@addresses');

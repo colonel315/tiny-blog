@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAddressesTable extends Migration
+class CreateUserRelationshipTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,18 +12,15 @@ class CreateAddressesTable extends Migration
      */
     public function up()
     {
-        Schema::create('addresses', function (Blueprint $table) {
+        Schema::create('user_relationship', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index();
+            $table->integer('relationship_id')->unsigned()->index();
+            $table->string('type');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string('street');
-            $table->string('city');
-            $table->string('state');
-            $table->string('zip');
+            $table->foreign('relationship_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
-
-        DB::statement('ALTER TABLE addresses ADD FULLTEXT search(city, state)');
     }
 
     /**
@@ -33,10 +30,6 @@ class CreateAddressesTable extends Migration
      */
     public function down()
     {
-        Schema::table('addresses', function($table) {
-            $table->dropIndex('search');
-        });
-
-        Schema::drop('addresses');
+        Schema::drop('user_relationship');
     }
 }

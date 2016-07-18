@@ -89,7 +89,7 @@ class AuthController extends Controller
         $address->state = $data['state'];
         $address->zip = $data['zip'];
         
-        $user->addAddress($address, $user->id);
+        $user->addAddress($address);
 
         return $user;
     }

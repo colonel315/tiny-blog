@@ -28,16 +28,30 @@ class User extends Authenticatable
     {
         return $this->hasMany(Address::class);
     }
+    
+    public function statuses()
+    {
+        return $this->hasMany(Status::class);
+    }
 
     public function userRelationships()
     {
         return $this->belongsToMany(User::class, 'user_relationship', 'user_id', 'relationship_id');
     }
 
-    public function addAddress(Address $address, $userId)
+    public function addAddress(Address $address)
     {
-        $address->user_id = $userId;
+        $address->user_id = $this->id;
         return $this->addresses()->save($address);
+    }
+
+    public function addStatus($newStatus)
+    {
+        $status = new Status;
+        $status->status = $newStatus;
+        $status->user_id = $this->id;
+
+        return $this->statuses()->save($status);
     }
 
     public function addBlocked($userId, $blockedId)
