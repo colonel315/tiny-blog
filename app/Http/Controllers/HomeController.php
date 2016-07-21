@@ -23,14 +23,12 @@ class HomeController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(Request $request)
     {
-        return $this->validate($request, [
-            'password' => 'required|min:6|confirmed',
-        ]);
+        return $this->validate($request, ['password' => 'required|min:6|confirmed',]);
     }
 
     /**
@@ -40,21 +38,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-//        $statuses = Status::join('users', 'users.id', '=', 'statuses.user_id')
-//                            ->whereIn('statuses.user_id', function($query) {
-//                                $query->select('user_relationship.relationship_id')
-//                                ->from('user_relationship')
-//                                ->where('user_relationship.relationship_id', 'statuses.user_id');
-//                            })
-//                            ->orWhere('statuses.user_id', Auth::user()->id)
-//                            ->orderBy('statuses.created_at', 'DESC')->get();
-//
-//        return $statuses;
+        //        $statuses = Status::join('users', 'users.id', '=', 'statuses.user_id')
+        //                            ->whereIn('statuses.user_id', function($query) {
+        //                                $query->select('user_relationship.relationship_id')
+        //                                ->from('user_relationship')
+        //                                ->where('user_relationship.relationship_id', 'statuses.user_id');
+        //                            })
+        //                            ->orWhere('statuses.user_id', Auth::user()->id)
+        //                            ->orderBy('statuses.created_at', 'DESC')->get();
+        //
+        //        return dd($statuses);
 
         $statuses = DB::select("SELECT *
                                 FROM
                                   statuses
-                                    LEFT JOIN users ON users.id = statuses.user_id
+                                    INNER JOIN users ON users.id = statuses.user_id
                                 WHERE
                                     statuses.user_id IN (
                                       SELECT
@@ -63,9 +61,11 @@ class HomeController extends Controller
                                         user_relationship
                                       WHERE
                                         user_relationship.relationship_id = statuses.user_id
+                                      AND 
+                                        user_relationship.type = 'Friend'
                                     )
                                   OR
-                                    statuses.user_id =".Auth::user()->id."
+                                    statuses.user_id =" . Auth::user()->id . "
                                 ORDER BY
                                   statuses.created_at DESC");
 
@@ -75,7 +75,7 @@ class HomeController extends Controller
     public function createStatus(Request $request)
     {
         $user = Auth::user();
-        
+
         $user->addStatus($request->status);
 
         return redirect()->action('HomeController@index');
@@ -85,14 +85,7 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        $data = [
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'username' => $user->username,
-            'email' => $user->email,
-            'high_school' => $user->high_school,
-            'description' => $user->description,
-        ];
+        $data = ['first_name' => $user->first_name, 'last_name' => $user->last_name, 'username' => $user->username, 'email' => $user->email, 'high_school' => $user->high_school, 'description' => $user->description,];
 
         return view('user.settings')->with('data', $data);
     }
@@ -105,7 +98,7 @@ class HomeController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        
+
         if(!is_null($request->first_name)) {
             $user->first_name = $request->first_name;
         }

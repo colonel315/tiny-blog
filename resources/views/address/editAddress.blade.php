@@ -8,7 +8,8 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Edit Address</div>
                         <div class="panel-body">
-                            <form class="form-horizontal" role="form" method="POST" action="{{ url('/addresses/update') }}">
+                            <form class="form-horizontal" role="form" method="POST"
+                                  action="{{ url('/addresses/update') }}">
                                 {{ csrf_field() }}
 
                                 <input type="hidden" name="addressId" value="{{ $address['id'] }}">
@@ -17,7 +18,8 @@
                                     <label for="street" class="col-md-4 control-label">Street Address</label>
 
                                     <div class="col-md-6">
-                                        <input id="street" type="text" class="form-control" name="street" placeholder="{{ $address['street'] }}">
+                                        <input id="street" type="text" class="form-control" name="street"
+                                               placeholder="{{ $address['street'] }}">
 
                                         @if ($errors->has('street'))
                                             <span class="help-block">
@@ -31,7 +33,8 @@
                                     <label for="city" class="col-md-4 control-label">City</label>
 
                                     <div class="col-md-6">
-                                        <input id="city" type="text" class="form-control" name="city" placeholder="{{ $address['city'] }}">
+                                        <input id="city" type="text" class="form-control" name="city"
+                                               placeholder="{{ $address['city'] }}">
 
                                         @if ($errors->has('city'))
                                             <span class="help-block">
@@ -45,7 +48,8 @@
                                     <label for="state" class="col-md-4 control-label">State</label>
 
                                     <div class="col-md-6">
-                                        <input id="state" type="text" class="form-control" name="state" placeholder="{{ $address['state'] }}">
+                                        <input id="state" type="text" class="form-control" name="state"
+                                               placeholder="{{ $address['state'] }}">
 
                                         @if ($errors->has('state'))
                                             <span class="help-block">
@@ -59,7 +63,8 @@
                                     <label for="zip" class="col-md-4 control-label">Zip</label>
 
                                     <div class="col-md-6">
-                                        <input id="zip" type="text" class="form-control" name="zip" placeholder="{{ $address['zip'] }}">
+                                        <input id="zip" type="text" class="form-control" name="zip"
+                                               placeholder="{{ $address['zip'] }}">
 
                                         @if ($errors->has('zip'))
                                             <span class="help-block">

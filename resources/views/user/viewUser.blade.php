@@ -10,7 +10,7 @@
                             <input type="hidden" name="id" value="{{ $data['user']->id }}">
                             {{ csrf_field() }}
 
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-warning">
                                 Unblock {{ $data["user"]->first_name }} {{ $data["user"]->last_name }}
                             </button>
                         </form>
@@ -27,11 +27,12 @@
                 </div>
                 <div class="pull-right">
                     @if(Auth::user()->userRelationships()->where('relationship_id', $data['user']->id)->where('type', 'Friend')->exists())
-                        <form action="{{ url('/unfriend/' . $data["user"]->id) }}" method="post" class="form-horizontal">
+                        <form action="{{ url('/unfriend/' . $data["user"]->id) }}" method="post"
+                              class="form-horizontal">
                             <input type="hidden" name="id" value="{{ $data['user']->id }}">
                             {{ csrf_field() }}
 
-                            <button type="submit" class="btn btn-warning" style = "margin-right: 15px;">
+                            <button type="submit" class="btn btn-warning" style="margin-right: 15px;">
                                 Unfriend {{ $data["user"]->first_name }} {{ $data["user"]->last_name }}
                             </button>
                         </form>
@@ -40,7 +41,7 @@
                             <input type="hidden" name="id" value="{{ $data['user']->id }}">
                             {{ csrf_field() }}
 
-                            <button type="submit" class="btn btn-primary" style = "margin-right: 15px;">
+                            <button type="submit" class="btn btn-primary" style="margin-right: 15px;">
                                 Friend {{ $data["user"]->first_name }} {{ $data["user"]->last_name }}
                             </button>
                         </form>

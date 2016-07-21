@@ -11,24 +11,20 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
-        'first_name', 'last_name', 'email', 'password', 'description', 'high_school', 'username',
-    ];
+    protected $fillable = ['first_name', 'last_name', 'email', 'password', 'description', 'high_school', 'username',];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token',];
 
     public function addresses()
     {
         return $this->hasMany(Address::class);
     }
-    
+
     public function statuses()
     {
         return $this->hasMany(Status::class);
@@ -42,6 +38,7 @@ class User extends Authenticatable
     public function addAddress(Address $address)
     {
         $address->user_id = $this->id;
+
         return $this->addresses()->save($address);
     }
 
@@ -56,23 +53,17 @@ class User extends Authenticatable
 
     public function addBlocked($userId, $blockedId)
     {
-        Block::create([
-            'user_id' => $userId,
-            'relationship_id' => $blockedId
-        ]);
+        Block::create(['user_id' => $userId, 'relationship_id' => $blockedId]);
     }
 
     public function removeBlocked($blockedId)
     {
         $this->userRelationships()->detach($blockedId);
     }
-    
+
     public function addFriend($userId, $friendId)
     {
-        Friend::create([
-            'user_id' => $userId,
-            'relationship_id' => $friendId
-        ]);
+        Friend::create(['user_id' => $userId, 'relationship_id' => $friendId]);
     }
 
     public function removeFriend($friendId)

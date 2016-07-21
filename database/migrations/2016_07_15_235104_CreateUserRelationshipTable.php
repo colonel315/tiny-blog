@@ -12,7 +12,7 @@ class CreateUserRelationshipTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_relationship', function (Blueprint $table) {
+        Schema::create('user_relationship', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index();
             $table->integer('relationship_id')->unsigned()->index();

@@ -15,7 +15,8 @@
                                 <div class="list-group-item">Zip: {{ $address['zip'] }}</div>
                             </div>
 
-                            <form class="form-horizontal" role="form" method="POST" action="{{ url('/addresses/delete') }}">
+                            <form class="form-horizontal" role="form" method="POST"
+                                  action="{{ url('/addresses/delete') }}">
                                 {{ csrf_field() }}
 
                                 <input type="hidden" name="addressId" value="{{ $address['id'] }}">

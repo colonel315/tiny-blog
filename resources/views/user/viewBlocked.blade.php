@@ -13,26 +13,27 @@
                     </tr>
                     </thead>
                     <tbody>
-                            @for($i = 0; $i < count($blocked); $i++)
-                                <tr>
-                                    <td>
-                                        {{ $blocked[$i]->first_name }}
-                                    </td>
-                                    <td>
-                                        {{ $blocked[$i]->last_name }}
-                                    </td>
-                                    <td>
-                                        <form action="{{ url('/unblock/' . $blocked[$i]->id) }}" method="post" class="form-horizontal">
-                                            <input type="hidden" name="id" value="{{ $blocked[$i]->id }}">
-                                            {{ csrf_field() }}
+                    @for($i = 0; $i < count($blocked); $i++)
+                        <tr>
+                            <td>
+                                {{ $blocked[$i]->first_name }}
+                            </td>
+                            <td>
+                                {{ $blocked[$i]->last_name }}
+                            </td>
+                            <td>
+                                <form action="{{ url('/unblock/' . $blocked[$i]->id) }}" method="post"
+                                      class="form-horizontal">
+                                    <input type="hidden" name="id" value="{{ $blocked[$i]->id }}">
+                                    {{ csrf_field() }}
 
-                                            <button type="submit" class="btn btn-primary">
-                                                Unblock
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endfor
+                                    <button type="submit" class="btn btn-primary">
+                                        Unblock
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endfor
                     </tbody>
                 </table>
             </div>

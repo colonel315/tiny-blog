@@ -20,6 +20,7 @@ class UserController extends Controller
     public function search()
     {
         $data = null;
+
         return view('user.search')->with('data', $data);
     }
 
@@ -31,25 +32,25 @@ class UserController extends Controller
 
         $data = DB::select("
                             SELECT *,
-                                MATCH (first_name, last_name) AGAINST ('".$query."') AS nscore,
-                                MATCH (addresses.city, addresses.state) AGAINST ('".$query."') AS cscore
+                                MATCH (first_name, last_name) AGAINST ('" . $query . "') AS nscore,
+                                MATCH (addresses.city, addresses.state) AGAINST ('" . $query . "') AS cscore
                             FROM users
                               LEFT JOIN addresses ON users.id = addresses.user_id
                               LEFT JOIN user_relationship ON users.id = user_relationship.user_id
                             WHERE
-                              (MATCH (first_name, last_name) AGAINST ('".$query."')
+                              (MATCH (first_name, last_name) AGAINST ('" . $query . "')
                             OR
-                              MATCH (addresses.city, addresses.state) AGAINST ('".$query."'))
+                              MATCH (addresses.city, addresses.state) AGAINST ('" . $query . "'))
                             AND
-                              NOT users.id = ".$userId."
+                              NOT users.id = " . $userId . "
                             AND
-                              user_relationship.relationship_id IS NULL"
-        );
+                              user_relationship.relationship_id IS NULL");
 
         return view('user.search')->with('data', $data);
     }
-    
-    public function viewUser($username) {
+
+    public function viewUser($username)
+    {
         if($username == Auth::user()->username) {
             return redirect()->to('/home');
         }
@@ -60,10 +61,7 @@ class UserController extends Controller
             abort(404, "unauthorized access");
         }
 
-        $data = [
-            'user' => $user,
-            'addresses' => $user->addresses
-        ];
+        $data = ['user' => $user, 'addresses' => $user->addresses];
 
         return view('user.viewUser')->with('data', $data);
     }
@@ -71,35 +69,39 @@ class UserController extends Controller
     public function viewBlocked()
     {
         $blocked = Auth::user()->blockedUsers;
-        
+
         return view('user.viewBlocked')->with('blocked', $blocked);
     }
 
-    public function blockUser($id) {
+    public function blockUser($id)
+    {
         $user = User::find(Auth::user()->id);
-        
+
         $user->addBlocked($user->id, $id);
 
         return back();
     }
 
-    public function removeBlockUser($id) {
+    public function removeBlockUser($id)
+    {
         $user = User::find(Auth::user()->id);
 
         $user->removeBlocked($id);
 
         return back();
     }
-    
-    public function friendUser($id) {
+
+    public function friendUser($id)
+    {
         $user = User::find(Auth::user()->id);
-        
+
         $user->addFriend($user->id, $id);
 
         return back();
     }
 
-    public function removeFriendUser($id) {
+    public function removeFriendUser($id)
+    {
         $user = User::find(Auth::user()->id);
 
         $user->removeFriend($id);

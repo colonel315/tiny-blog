@@ -4,11 +4,11 @@
     @include('layouts.head')
 </head>
 <body id="app-layout">
-    @include('layouts.header')
+@include('layouts.header')
 
-    @yield('content')
+@yield('content')
 
-    <!-- JavaScripts -->
-    @include('layouts.footer');
+<!-- JavaScripts -->
+@include('layouts.footer');
 </body>
 </html>

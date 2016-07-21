@@ -15,24 +15,22 @@ class AddressController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'password' => 'required|min:6|confirmed'
-        ]);
+        return Validator::make($data, ['password' => 'required|min:6|confirmed']);
     }
 
     public function addresses()
     {
         $addresses = Auth::user()->addresses;
-        
+
         return view('address.address')->with(['addresses' => $addresses]);
     }
 
@@ -77,17 +75,19 @@ class AddressController extends Controller
         return redirect()->action('User\AddressController@addresses');
     }
 
-    public function remove($addressId) {
+    public function remove($addressId)
+    {
         $address = Auth::user()->addresses()->where('id', $addressId)->first();
 
         return view('address.deleteAddress')->with('address', $address);
     }
-    
-    public function delete(Request $request) {
+
+    public function delete(Request $request)
+    {
         $user = Auth::user();
 
         $user->addresses()->where('id', $request->addressId)->delete();
-        
+
         return redirect()->action('User\AddressController@addresses');
     }
 }

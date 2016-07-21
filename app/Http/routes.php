@@ -13,7 +13,7 @@
 
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/', function () {
+Route::get('/', function() {
     if(Auth::guest()) {
         return view('welcome');
     }
