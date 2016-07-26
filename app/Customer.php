@@ -2,8 +2,12 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Auth;
+use Stripe;
+
 class Customer extends StripeObject
 {
+    protected $fillable = ['user_id'];
     /** @var  User (foreign key) */
     protected $user_id;
     /**
@@ -20,6 +24,35 @@ class Customer extends StripeObject
      */
     protected $subscription;
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function users()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cards()
+    {
+        return $this->hasMany(Card::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function subscriptions()
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+    
     /**
      * @return User
      */
@@ -96,6 +129,16 @@ class Customer extends StripeObject
     protected function _save()
     {
         // TODO: Implement _save() method.
+        $user = Auth::user();
+
+        $customer = Stripe\Customer::create(array(
+            "description" => $this->user_id." ".$user->first_name." ".$user->last_name,
+            "email" => $user->email
+        ));
+
+        $this->token = $customer->getToken();
+
+        return $this;
     }
 
     /**
@@ -114,5 +157,7 @@ class Customer extends StripeObject
     protected function _delete()
     {
         // TODO: Implement _delete() method.
+        $customer = Stripe\Customer::retrieve($this->id);
+        $customer->delete();
     }
 }

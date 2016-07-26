@@ -2,8 +2,17 @@
 
 namespace App;
 
+use Stripe;
+
 class Plan extends StripeObject
 {
+    protected $fillable = ['name', 'price', 'interval'];
+    
+    /**
+     * Level of plan the customer got .
+     * @var  string
+     */
+    protected $id;
     /** @var  string */
     protected $name;
     /**
@@ -20,6 +29,26 @@ class Plan extends StripeObject
      * @var  string
      */
     protected $interval;
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * @return string
@@ -97,6 +126,17 @@ class Plan extends StripeObject
     protected function _save()
     {
         // TODO: Implement _save() method.
+
+        $plan = Stripe\Plan::create(array(
+            "amount" => $this->getPrice(),
+            "interval" => $this->getInterval(),
+            "name" => $this->getName(),
+            "currency" => "usd",
+        ));
+
+        $this->token = $plan->getToken();
+        
+        return $this;
     }
 
     /**

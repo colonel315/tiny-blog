@@ -2,8 +2,12 @@
 
 namespace App;
 
+use Stripe;
+
 class Subscription extends StripeObject
 {
+    protected $fillable = ['customer_id', 'plan_id', 'date_deleted', 'current_period_start', 'current_period_end', 
+                            'state'];
     /** @var  int (foreign key) */
     protected $customer_id;
     /** @var  Plan (foreign key) */
@@ -47,6 +51,16 @@ class Subscription extends StripeObject
      * @var string
      */
     protected $state;
+
+    public function plans()
+    {
+        return $this->hasOne(Plan::class);
+    }
+
+    public function customers()
+    {
+        return $this->hasOne(Customer::class);
+    }
 
     /**
      * @return int
@@ -204,6 +218,12 @@ class Subscription extends StripeObject
     protected function _save()
     {
         // TODO: Implement _save() method.
+        $subscription = Stripe\Subscription::create(array(
+           'customer' => $this->getCustomerId(),
+            'plan' => $this->getPlan()->id
+        ));
+
+        $this->token = $subscription->getToken();
     }
 
     /**

@@ -8,6 +8,8 @@
 
 namespace App;
 
+use Stripe\Stripe;
+
 /**
  * Class Stripe
  *

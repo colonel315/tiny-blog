@@ -14,6 +14,15 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function(Blueprint $table) {
             $table->increments('id');
+            $table->integer('customer_id')->unsigned()->index();
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
+            $table->integer('subscription_id')->unsigned()->index();
+            $table->foreign('subscription_id')->references('id')->on('subscriptions')->onDelete('cascade');
+            $table->integer('amount');
+            $table->dateTime('last_date_attempted');
+            $table->integer('attempt_count');
+            $table->integer('receipt_number');
+            $table->string('status');
             $table->timestamps();
         });
     }

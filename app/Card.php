@@ -2,8 +2,13 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Auth;
+use Stripe;
+
 class Card extends StripeObject
 {
+    protected $fillable = ['customer_id', 'number', 'expiration_month', 'expiration_year'];
+    
     /** @var  Customer (foreign key) */
     protected $customer_id;
     /**
@@ -28,6 +33,14 @@ class Card extends StripeObject
      */
     protected $expiration_year;
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function customers()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+    
     /**
      * @return Customer
      */
@@ -124,6 +137,25 @@ class Card extends StripeObject
     protected function _save()
     {
         // TODO: Implement _save() method.
+        $user = Auth::user();
+
+        $customer = Stripe\Customer::retrieve($this->getCustomerId());
+
+        $card = $customer->sources->create(array("source" => [
+            "object" => "card",
+            "address_city" => $user->addresses[0]->city,
+            "address_state" => $user->addresses[0]->state,
+            "address_line1" => $user->addresses[0]->street,
+            "address_zip" => $user->addresses[0]->zip,
+            "exp_month" => $this->getExpirationMonth(),
+            "exp_year" => $this->getExpirationYear(),
+            "number" => $this->getNumber(),
+            "name" => $user->first_name." ".$user->last_name
+        ]));
+
+        $this->token = $card->getToken();
+        
+        return $this;
     }
 
     /**

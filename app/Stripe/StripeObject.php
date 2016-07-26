@@ -30,9 +30,9 @@ abstract class StripeObject extends Model
      */
     protected $processor;
 
-    public function __construct(StripeProcessor $stripe)
+    public function __construct()
     {
-        $this->processor = $stripe;
+        $this->processor = new StripeProcessor('pk_test_FVd5SLb2BCdSSiBK29QJ2uJ4', 'sk_test_X6eGWxYtNE9wiwitkAtUWSYE');
         $this->processor->connect();
     }
 
@@ -64,12 +64,14 @@ abstract class StripeObject extends Model
      *
      * @return $this
      */
-    public function save()
+    public function tokenize()
     {
         if(!empty($this->token)) {
             return $this;
         }
 
+        parent::save($this->toArray());
+        
         return $this;
     }
 
@@ -89,6 +91,8 @@ abstract class StripeObject extends Model
                                  saved to the API.");
         }
 
+        parent::delete();
+        
         return $this->_delete();
     }
 

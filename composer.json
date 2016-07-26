@@ -10,7 +10,8 @@
   "require": {
     "php": ">=5.5.9",
     "laravel/framework": "5.2.*",
-    "nanigans/single-table-inheritance": "0.6.*"
+    "nanigans/single-table-inheritance": "0.6.*",
+    "stripe/stripe-php": "^3.17"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

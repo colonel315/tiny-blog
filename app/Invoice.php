@@ -2,8 +2,14 @@
 
 namespace App;
 
+use Stripe;
+
 class Invoice extends StripeObject
 {
+    protected $fillable = ['customer_id', 'subscription_id', 'amount', 'last_date_attempted', 'attempt_count', 
+                            'receipt_number', 'status'];
+    /** @var  Customer (foreign key) */
+    protected $customer_id;
     /** @var  Subscription (foreign key) */
     protected $subscription_id;
     /**
@@ -52,6 +58,42 @@ class Invoice extends StripeObject
      */
     protected $status;
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function customers()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function subscriptions()
+    {
+        return $this->belongsTo(Subscription::class);
+    }
+    
+    /**
+     * @return Customer
+     */
+    public function getCustomerId()
+    {
+        return $this->customer_id;
+    }
+
+    /**
+     * @param Customer $customer_id
+     *
+     * @return $this
+     */
+    public function setCustomerId($customer_id)
+    {
+        $this->customer_id = $customer_id;
+
+        return $this;
+    }
+    
     /**
      * @return Subscription
      */
@@ -208,6 +250,15 @@ class Invoice extends StripeObject
     protected function _save()
     {
         // TODO: Implement _save() method.
+
+        $invoice = Stripe\Invoice::create(array(
+            "customer" => $this->getCustomerId(),
+            "subscription" => $this->getSubscriptionId()
+        ));
+
+        $this->token = $invoice->getToken();
+
+        return $this;
     }
 
     /**

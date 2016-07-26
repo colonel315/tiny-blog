@@ -20,6 +20,11 @@ class User extends Authenticatable
      */
     protected $hidden = ['password', 'remember_token',];
 
+    public function customers()
+    {
+        return $this->hasOne(Customer::class);
+    }
+
     public function addresses()
     {
         return $this->hasMany(Address::class);
