@@ -60,6 +60,7 @@ class StripeProcessor
                 return null;
             }
             Stripe::setApiKey($this->secretApiKey);
+            $this->isConnected = true;
         } catch(StripeApiException $e) {
             //Stripe's API is down/unavailable.
             throw new Exception("Sorry, our payment processor is unavailable at this time.", $e->getCode(), $e);

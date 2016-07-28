@@ -18,6 +18,7 @@ class CreateInvoicesTable extends Migration
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->integer('subscription_id')->unsigned()->index();
             $table->foreign('subscription_id')->references('id')->on('subscriptions')->onDelete('cascade');
+            $table->string('token');
             $table->integer('amount');
             $table->dateTime('last_date_attempted');
             $table->integer('attempt_count');

@@ -16,9 +16,10 @@ class CreateCardsTable extends Migration
             $table->increments('id');
             $table->integer('customer_id')->unsigned()->index();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
-            $table->integer('number');
-            $table->integer('expiration_month');
-            $table->integer('expiration_year');
+            $table->string('token')->unique();
+            $table->string('number');
+            $table->string('expiration_month');
+            $table->string('expiration_year');
             $table->timestamps();
         });
     }

@@ -2,27 +2,24 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Auth;
 use Stripe;
 
 class Customer extends StripeObject
 {
     protected $fillable = ['user_id'];
-    /** @var  User (foreign key) */
-    protected $user_id;
+    
+    protected $saver;
+    protected $deleter;
+    
     /**
-     * An array of Card objects. (many cards to one customer relationship)
-     *
-     * @var Card[]
+     * Customer constructor.
      */
-    protected $cards;
-    /**
-     * One-to-one relationship with Subscription object. In this relationship, the subscription should be accessible
-     * from this object, but the customer ID should be stored in the subscription object.
-     *
-     * @var Subscription
-     */
-    protected $subscription;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->saver = new StripeSave();
+        $this->deleter = new StripeDelete();
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -52,66 +49,6 @@ class Customer extends StripeObject
     {
         return $this->hasMany(Invoice::class);
     }
-    
-    /**
-     * @return User
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
-    }
-
-    /**
-     * @param User $user_id
-     *
-     * @return $this
-     */
-    public function setUserId($user_id)
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
-
-    /**
-     * @return Card[]
-     */
-    public function getCards()
-    {
-        return $this->cards;
-    }
-
-    /**
-     * @param Card[] $cards
-     *
-     * @return $this
-     */
-    public function setCards($cards)
-    {
-        $this->cards = $cards;
-
-        return $this;
-    }
-
-    /**
-     * @return Subscription
-     */
-    public function getSubscription()
-    {
-        return $this->subscription;
-    }
-
-    /**
-     * @param Subscription $subscription
-     *
-     * @return $this
-     */
-    public function setSubscription($subscription)
-    {
-        $this->subscription = $subscription;
-
-        return $this;
-    }
 
     /**
      * Saves the current payment object to Stripe's API.
@@ -126,17 +63,14 @@ class Customer extends StripeObject
      *
      * @return $this
      */
-    protected function _save()
+    public function _save()
     {
         // TODO: Implement _save() method.
-        $user = Auth::user();
+        $user = User::find($this->user_id);
 
-        $customer = Stripe\Customer::create(array(
-            "description" => $this->user_id." ".$user->first_name." ".$user->last_name,
-            "email" => $user->email
-        ));
+        $customer = $this->saver->saveCustomer($user);
 
-        $this->token = $customer->getToken();
+        $this->token = $customer->id;
 
         return $this;
     }
@@ -154,10 +88,10 @@ class Customer extends StripeObject
      *
      * @return $this
      */
-    protected function _delete()
+    public function _delete()
     {
         // TODO: Implement _delete() method.
-        $customer = Stripe\Customer::retrieve($this->id);
-        $customer->delete();
+        $this->deleter->deleteCustomer($this);
+        return $this;
     }
 }

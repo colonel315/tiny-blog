@@ -8,106 +8,22 @@ class Plan extends StripeObject
 {
     protected $fillable = ['name', 'price', 'interval'];
     
-    /**
-     * Level of plan the customer got .
-     * @var  string
-     */
-    protected $id;
-    /** @var  string */
-    protected $name;
-    /**
-     * The cost of the subscription plan (in cents).
-     * So if the plan is $5, this value should be 500.
-     *
-     * @var  int
-     */
-    protected $price;
-    /**
-     * The interval that each subscription will be charged.
-     * Must be monthly or yearly.
-     *
-     * @var  string
-     */
-    protected $interval;
+    protected $saver;
+    protected $deleter;
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function __construct()
     {
-        return $this->id;
+        parent::__construct();
+        $this->saver = new StripeSave();
+        $this->deleter = new StripeDelete();
     }
 
     /**
-     * @param string $id
-     *
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function setId($id)
+    public function subscriptions()
     {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param int $price
-     *
-     * @return $this
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getInterval()
-    {
-        return $this->interval;
-    }
-
-    /**
-     * @param string $interval
-     *
-     * @return $this
-     */
-    public function setInterval($interval)
-    {
-        $this->interval = $interval;
-
-        return $this;
+        return $this->hasOne(Subscription::class);
     }
 
     /**
@@ -123,19 +39,11 @@ class Plan extends StripeObject
      *
      * @return $this
      */
-    protected function _save()
+    public function _save()
     {
         // TODO: Implement _save() method.
+        $this->saver->savePlan($this);
 
-        $plan = Stripe\Plan::create(array(
-            "amount" => $this->getPrice(),
-            "interval" => $this->getInterval(),
-            "name" => $this->getName(),
-            "currency" => "usd",
-        ));
-
-        $this->token = $plan->getToken();
-        
         return $this;
     }
 
@@ -152,8 +60,10 @@ class Plan extends StripeObject
      *
      * @return $this
      */
-    protected function _delete()
+    public function _delete()
     {
         // TODO: Implement _delete() method.
+        $this->deleter->deletePlan($this);
+        return $this;
     }
 }
