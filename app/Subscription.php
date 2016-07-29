@@ -2,6 +2,7 @@
 
 namespace App;
 
+use DateTime;
 use Stripe;
 
 class Subscription extends StripeObject
@@ -73,7 +74,7 @@ class Subscription extends StripeObject
         // TODO: Implement _delete() method.
         
         $this->deleter->deleteSubscription($this);
-        $this->date_deleted = date('d-M-Y H:i:s');
+        $this->date_deleted = new DateTime;
         $this->state = 'CANCELED';
         $this->save();
 
