@@ -9,14 +9,12 @@ class Card extends StripeObject
 {
     protected $fillable = ['customer_id', 'number', 'expiration_month', 'expiration_year'];
 
-    protected $saver;
-    protected $deleter;
+    protected $crud;
 
     public function __construct()
     {
         parent::__construct();
-        $this->saver = new StripeSave();
-        $this->deleter = new StripeDelete();
+        $this->crud = new StripeCrud();
     }
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -25,7 +23,7 @@ class Card extends StripeObject
     {
         return $this->belongsTo(Customer::class);
     }
-    
+
     /**
      * Saves the current payment object to Stripe's API.
      *
@@ -36,21 +34,41 @@ class Card extends StripeObject
      *      }
      *
      * IMPORTANT: This only communicates with Stripe's API. It MUST not contain any database insert/update logic.
-     *
-     * @return $this
+     * @return $this $ this
+     * @throws \Exception
      */
     public function _save()
     {
         // TODO: Implement _save() method.
-        $user = User::find(1);
-
-        $customer = Stripe\Customer::retrieve(
-            Customer::where('user_id', $user->id)->first()->token
+        $user = User::find(
+            Customer::find($this->customer_id)
         );
 
-        $card = $this->saver->saveCard($customer, $user, $this);
+        $customer = Stripe\Customer::retrieve(
+            Customer::find($this->customer_id)->first()->token
+        );
 
-        $this->token = $card->id;
+        if(!$customer) {
+            throw new \Exception('Customer has not been saved to Stripe');
+        }
+        
+        if(!empty($this->token)) {
+            $card = $customer->sources->retrieve($this->token);
+            
+            if(!$card) {
+                throw new \Exception('customer card {$this->token} doesn\'t exist');
+            }
+            
+            $card = $this->crud->updateCard($card, $this);
+            
+            $card->save();
+        }
+        else {
+            $card = $this->crud->saveCard($customer, $user, $this);
+
+            $this->token = $card->id;
+        }
+        
         
         return $this;
     }
@@ -71,7 +89,7 @@ class Card extends StripeObject
     public function _delete()
     {
         // TODO: Implement _delete() method.
-        $this->deleter->deleteCard($this);
+        $this->crud->deleteCard($this);
         return $this;
     }
 }

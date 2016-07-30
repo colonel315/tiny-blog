@@ -8,17 +8,15 @@ class Customer extends StripeObject
 {
     protected $fillable = ['user_id'];
     
-    protected $saver;
-    protected $deleter;
-    
+    protected $crud;
+
     /**
      * Customer constructor.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->saver = new StripeSave();
-        $this->deleter = new StripeDelete();
+        $this->crud = new StripeCrud();
     }
 
     /**
@@ -26,7 +24,7 @@ class Customer extends StripeObject
      */
     public function users()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -60,18 +58,28 @@ class Customer extends StripeObject
      *      }
      *
      * IMPORTANT: This only communicates with Stripe's API. It MUST not contain any database insert/update logic.
-     *
      * @return $this
+     * @throws \Exception
      */
     public function _save()
     {
         // TODO: Implement _save() method.
-        $user = User::find($this->user_id);
-
-        $customer = $this->saver->saveCustomer($user);
-
-        $this->token = $customer->id;
-
+        if(!empty($this->token)) {  //  customer exists, going to update
+            $customer = Stripe\Customer::retrieve($this->token);
+            
+            if(!$customer) {
+                throw new \Exception('Customer {$this->token} doesn\'t exist');
+            }
+            
+            $customer = $this->crud->updateCustomer($customer, $this);
+            $customer->save();
+        }
+        else {
+            $user = User::find($this->user_id);
+            $customer = $this->crud->saveCustomer($user);
+            $this->token = $customer->id;
+        }
+        
         return $this;
     }
 
@@ -91,7 +99,7 @@ class Customer extends StripeObject
     public function _delete()
     {
         // TODO: Implement _delete() method.
-        $this->deleter->deleteCustomer($this);
+        $this->crud->deleteCustomer($this);
         return $this;
     }
 }

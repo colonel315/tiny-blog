@@ -10,8 +10,7 @@ class Subscription extends StripeObject
     protected $fillable = ['customer_id', 'plan_id', 'date_deleted', 'current_period_start', 'current_period_end',
                             'state'];
 
-    protected $saver;
-    protected $deleter;
+    protected $crud;
 
     /**
      * Subscription constructor.
@@ -19,8 +18,7 @@ class Subscription extends StripeObject
     public function __construct()
     {
         parent::__construct();
-        $this->saver = new StripeSave();
-        $this->deleter = new StripeDelete();
+        $this->crud = new StripeCrud();
     }
 
     public function plans()
@@ -30,9 +28,9 @@ class Subscription extends StripeObject
 
     public function customers()
     {
-        return $this->hasOne(Customer::class);
+        return $this->belongsTo(Customer::class);
     }
-    
+
     /**
      * Saves the current payment object to Stripe's API.
      *
@@ -43,15 +41,27 @@ class Subscription extends StripeObject
      *      }
      *
      * IMPORTANT: This only communicates with Stripe's API. It MUST not contain any database insert/update logic.
-     *
      * @return $this
+     * @throws \Exception
      */
     public function _save()
     {
         // TODO: Implement _save() method.
-        $subscription = $this->saver->saveSubscription($this);
+        if(!empty($this->token)) {
+            $subscription = Stripe\Subscription::retrieve($this->token);
+            
+            if(!$subscription) {
+                throw new \Exception('Subscription {$this->token} doesn\'t exist');
+            }
+            
+            $subscription = $this->crud->updateSubscription($subscription, $this);
+            $subscription->save();
+        }
+        else {
+            $subscription = $this->crud->saveSubscription($this);
 
-        $this->token = $subscription->id;
+            $this->token = $subscription->id;
+        }
 
         return $this;
     }
@@ -73,7 +83,7 @@ class Subscription extends StripeObject
     {
         // TODO: Implement _delete() method.
         
-        $this->deleter->deleteSubscription($this);
+        $this->crud->deleteSubscription($this);
         $this->date_deleted = new DateTime;
         $this->state = 'CANCELED';
         $this->save();

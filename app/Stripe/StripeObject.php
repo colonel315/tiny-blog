@@ -39,13 +39,8 @@ abstract class StripeObject extends Model
      */
     public function tokenize()
     {
-        if(!empty($this->token)) {
-            return $this;
-        }
-
         $this->_save();
-        parent::save();
-
+        
         return $this;
     }
 

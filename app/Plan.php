@@ -8,14 +8,12 @@ class Plan extends StripeObject
 {
     protected $fillable = ['name', 'price', 'interval'];
     
-    protected $saver;
-    protected $deleter;
+    protected $crud;
 
     public function __construct()
     {
         parent::__construct();
-        $this->saver = new StripeSave();
-        $this->deleter = new StripeDelete();
+        $this->crud = new StripeCrud();
     }
 
     /**
@@ -23,7 +21,7 @@ class Plan extends StripeObject
      */
     public function subscriptions()
     {
-        return $this->hasOne(Subscription::class);
+        return $this->belongsTo(Subscription::class);
     }
 
     /**
@@ -42,7 +40,19 @@ class Plan extends StripeObject
     public function _save()
     {
         // TODO: Implement _save() method.
-        $this->saver->savePlan($this);
+        if(!empty($this->id)) {
+            $plan = Stripe\Plan::retrieve($this->level);
+
+            if(!$plan) {
+                throw new \Exception('Plan {$this->level} doesn\'t exist');
+            }
+
+            $plan = $this->crud->updatePlan($plan, $this);
+            $plan->save();
+        }
+        else {
+            $this->crud->savePlan($this);
+        }
 
         return $this;
     }
@@ -63,7 +73,7 @@ class Plan extends StripeObject
     public function _delete()
     {
         // TODO: Implement _delete() method.
-        $this->deleter->deletePlan($this);
+        $this->crud->deletePlan($this);
         return $this;
     }
 }

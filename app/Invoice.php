@@ -9,12 +9,12 @@ class Invoice extends StripeObject
     protected $fillable = ['customer_id', 'subscription_id', 'amount', 'last_date_attempted', 'attempt_count', 
                             'receipt_number', 'status'];
     
-    protected $saver;
+    protected $crud;
 
     public function __construct()
     {
         parent::__construct();
-        $this->saver = new StripeSave();
+        $this->crud = new StripeCrud();
     }
 
     /**
