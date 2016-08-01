@@ -6,10 +6,23 @@ use Stripe;
 
 class Plan extends StripeObject
 {
+    /**
+     * Items in array are able to be mass assigned
+     * 
+     * @var array $fillable
+     */
     protected $fillable = ['name', 'price', 'interval'];
-    
+
+    /**
+     * StripeCrud object that handles all crud functionality
+     * 
+     * @var StripeCrud $crud
+     */
     protected $crud;
 
+    /**
+     * Plan constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -34,8 +47,9 @@ class Plan extends StripeObject
      *      }
      *
      * IMPORTANT: This only communicates with Stripe's API. It MUST not contain any database insert/update logic.
-     *
+     * 
      * @return $this
+     * @throws \Exception
      */
     public function _save()
     {

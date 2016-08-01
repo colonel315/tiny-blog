@@ -6,11 +6,24 @@ use Stripe;
 
 class Invoice extends StripeObject
 {
+    /**
+     * Items in array are able to be mass assigned
+     *
+     * @var array $fillable
+     */
     protected $fillable = ['customer_id', 'subscription_id', 'amount', 'last_date_attempted', 'attempt_count', 
                             'receipt_number', 'status'];
-    
+
+    /**
+     * StripeCrud object that handles all crud functionality
+     *
+     * @var StripeCrud $crud
+     */
     protected $crud;
 
+    /**
+     * Invoice constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -18,6 +31,8 @@ class Invoice extends StripeObject
     }
 
     /**
+     * A customer has many invoices
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function customers()
@@ -26,6 +41,8 @@ class Invoice extends StripeObject
     }
 
     /**
+     * An invoice belongs to a subscription
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function subscriptions()

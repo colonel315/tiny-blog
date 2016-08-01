@@ -7,9 +7,19 @@ use Stripe;
 
 class Subscription extends StripeObject
 {
+    /**
+     * Items in array are able to be mass assigned
+     *
+     * @var array $fillable
+     */
     protected $fillable = ['customer_id', 'plan_id', 'date_deleted', 'current_period_start', 'current_period_end',
                             'state'];
 
+    /**
+     * StripeCrud object that handles all crud functionality
+     *
+     * @var StripeCrud $crud
+     */
     protected $crud;
 
     /**
@@ -21,11 +31,19 @@ class Subscription extends StripeObject
         $this->crud = new StripeCrud();
     }
 
+    /**
+     * Subscription has one plan
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function plans()
     {
         return $this->hasOne(Plan::class);
     }
 
+    /**
+     * Subscription belongs to a customer
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function customers()
     {
         return $this->belongsTo(Customer::class);
@@ -59,7 +77,8 @@ class Subscription extends StripeObject
         }
         else {
             $subscription = $this->crud->saveSubscription($this);
-
+            
+            $this->status = $subscription->status;
             $this->token = $subscription->id;
         }
 

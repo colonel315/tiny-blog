@@ -2,13 +2,22 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Auth;
 use Stripe;
 
 class Card extends StripeObject
 {
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array $fillable
+     */
     protected $fillable = ['customer_id', 'number', 'expiration_month', 'expiration_year'];
 
+    /**
+     * StripeCrud object that handles all crud functionality
+     *
+     * @var StripeCrud $crud
+     */
     protected $crud;
 
     public function __construct()
@@ -34,6 +43,7 @@ class Card extends StripeObject
      *      }
      *
      * IMPORTANT: This only communicates with Stripe's API. It MUST not contain any database insert/update logic.
+     * 
      * @return $this $ this
      * @throws \Exception
      */
@@ -41,7 +51,7 @@ class Card extends StripeObject
     {
         // TODO: Implement _save() method.
         $user = User::find(
-            Customer::find($this->customer_id)
+            Customer::find($this->customer_id)->user_id
         );
 
         $customer = Stripe\Customer::retrieve(

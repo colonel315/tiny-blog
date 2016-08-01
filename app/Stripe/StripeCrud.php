@@ -14,6 +14,8 @@ use DateTime;
 class StripeCrud
 {
     /**
+     * Saves the customer onto stripe
+     * 
      * @param User $user
      * @return Stripe\Customer
      */
@@ -25,12 +27,23 @@ class StripeCrud
         ));
     }
 
+    /**
+     * Deletes the stripe customer
+     * 
+     * @param $customer
+     */
     public function deleteCustomer($customer)
     {
-        $customer = Stripe\Customer::retrieve($customer->token);
-        $customer->delete();
+        Stripe\Customer::retrieve($customer->token)->delete();
     }
 
+    /**
+     * Updates the stripe customer to be saved
+     *
+     * @param $oldCustomer
+     * @param $newCustomer
+     * @return mixed
+     */
     public function updateCustomer($oldCustomer, $newCustomer)
     {
         if(!empty($newCustomer->description)) {
@@ -43,6 +56,14 @@ class StripeCrud
         return $oldCustomer;
     }
 
+    /**
+     * Saves the card onto stripe
+     *
+     * @param $customer
+     * @param $user
+     * @param $card
+     * @return mixed
+     */
     public function saveCard($customer, $user, $card)
     {
         return $customer->sources->create(array("source" => [
@@ -58,6 +79,11 @@ class StripeCrud
         ]));
     }
 
+    /**
+     * Deletes the card from stripe
+     *
+     * @param $card
+     */
     public function deleteCard($card)
     {
         $customer = Customer::find($card->customer_id);
@@ -67,6 +93,13 @@ class StripeCrud
         $stripeCus->sources->retrieve($customer->cards->where('token', $card->token)->first()->token)->delete();
     }
 
+    /**
+     * Updates the stripe card to be saved
+     *
+     * @param $oldCard
+     * @param $newCard
+     * @return mixed
+     */
     public function updateCard($oldCard, $newCard)
     {
         $oldCard->address_city = $newCard->address_city;
@@ -81,6 +114,12 @@ class StripeCrud
         return $oldCard;
     }
 
+    /**
+     * Save the plan onto stripe
+     *
+     * @param $plan
+     * @return Stripe\Plan
+     */
     public function savePlan($plan)
     {
         return Stripe\Plan::create(array(
@@ -88,22 +127,40 @@ class StripeCrud
             "interval" => $plan->interval,
             "name" => $plan->name,
             "currency" => "usd",
-            'id' =>$plan->level
+            'id' => $plan->level
         ));
     }
 
+    /**
+     * Deletes the plan on stripe
+     *
+     * @param $plan
+     */
     public function deletePlan($plan)
     {
         Stripe\Plan::retrieve($plan->level)->delete();
     }
 
+    /**
+     * Updates the stripe plan to be saved.
+     *
+     * @param $oldPlan
+     * @param $newPlan
+     * @return mixed
+     */
     public function updatePlan($oldPlan, $newPlan)
     {
         $oldPlan->name = $newPlan->name;
 
         return $oldPlan;
     }
-    
+
+    /**
+     * Saves the subscription onto stripe
+     *
+     * @param $subscription
+     * @return Stripe\Subscription
+     */
     public function saveSubscription($subscription)
     {
         return Stripe\Subscription::create(array(
@@ -114,11 +171,24 @@ class StripeCrud
         ));
     }
 
+    /**
+     *
+     * cancels the subscription on stripe
+     * @param $subscription
+     */
     public function deleteSubscription($subscription)
     {
         Stripe\Subscription::retrieve($subscription->token)->cancel();
     }
 
+
+    /**
+     * updates stripe subscription to be saved.
+     *
+     * @param $oldSubscription
+     * @param $newSubscription
+     * @return mixed
+     */
     public function updateSubscription($oldSubscription, $newSubscription)
     {
         $oldSubscription->plan = $newSubscription->plan_level;

@@ -6,8 +6,18 @@ use Stripe;
 
 class Customer extends StripeObject
 {
+    /**
+     * The attributes that are mass assignable.
+     * 
+     * @var array $fillable
+     */
     protected $fillable = ['user_id'];
-    
+
+    /**
+     * StripeCrud object that handles all crud functionality
+     *
+     * @var StripeCrud $crud
+     */
     protected $crud;
 
     /**
