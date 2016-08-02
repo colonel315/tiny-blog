@@ -85,9 +85,30 @@ class Customer extends StripeObject
             $customer->save();
         }
         else {
+            // save customer into stripe
             $user = User::find($this->user_id);
             $customer = $this->crud->saveCustomer($user);
-            $this->token = $customer->id;
+
+            // save customer into database
+            $cus = new Customer();
+            $cus->token = $customer->id;
+            $cus->user_id = $user->id;
+
+            $cus->save();
+
+            // save card into stripe
+            $stripeCard = $this->crud->saveCard($customer, $user, $this);
+
+            // create a card and save into database
+            $card = new Card();
+            // find the last customer, then add one to the id to find newest customer since it has yet to be created.
+            $card->customer_id = Customer::all()->last()->id;
+            $card->token = $stripeCard->id;
+            $card->number = $this->number;
+            $card->expiration_month = $this->expiration_month;
+            $card->expiration_year = $this->expiration_year;
+
+            $card->save();
         }
         
         return $this;
